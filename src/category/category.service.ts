@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async create(createCategoryDto: CreateCategoryDto, ownerId: number) {
+    const category = await this.databaseService.category.create({
+      data: {
+        ownerId: ownerId,
+        ...createCategoryDto,
+      },
+    });
+
+    return category;
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll(ownerId: number) {
+    const categories = await this.databaseService.category.findMany({
+      where: { ownerId: ownerId },
+    });
+
+    return categories;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number, ownerId: number) {
+    const category = await this.databaseService.category.findUnique({
+      where: { id: id, ownerId: ownerId },
+    });
+    if (!category) throw new NotFoundException('Категория не найдена');
+
+    return category;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, ownerId: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.databaseService.category.update({
+      where: { id: id, ownerId: ownerId },
+      data: {
+        ...updateCategoryDto,
+      },
+    });
+
+    return category;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number, ownerId: number) {
+    await this.databaseService.category.delete({
+      where: { id: id, ownerId: ownerId },
+    });
+    return `Категория #${id} удалена`;
   }
 }

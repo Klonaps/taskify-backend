@@ -6,11 +6,6 @@ import { Request } from 'express';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Get()
-  // findAll() {
-  //   return this.userService.findAll();
-  // }
-
   @Get()
   findOne(@Req() req: Request) {
     if (!req.user) throw new UnauthorizedException('Пользователь не аутентифицирован');
