@@ -9,6 +9,12 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
   constructor(private userService: UserService, private jwtService: JwtService, private configService: ConfigService) {}
 
+  async verifyToken(user: { id: number; login: string }) {
+    return {
+      user,
+    };
+  }
+
   async login(loginDto: LoginAuthDto) {
     const candidate = await this.userService.findByLogin(loginDto.login);
     if (!candidate) throw new BadRequestException('Неправильный логин или пароль');

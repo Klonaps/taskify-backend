@@ -25,7 +25,7 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
-  app.setGlobalPrefix('api/v1', {
+  app.setGlobalPrefix('api', {
     exclude: ['/'],
   });
   await app.listen(PORT, () => {
