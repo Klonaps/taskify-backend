@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { DatabaseService } from 'src/database/database.service';
@@ -8,6 +8,13 @@ export class CategoryService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createCategoryDto: CreateCategoryDto, ownerId: number) {
+    const isCategoryExist = await this.databaseService.category.findFirst({
+      where: {
+        name: createCategoryDto.name,
+        ownerId,
+      },
+    });
+    if (isCategoryExist) throw new BadRequestException('Категория с таким названием уже сущетвует');
     const category = await this.databaseService.category.create({
       data: {
         ownerId: ownerId,
