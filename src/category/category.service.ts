@@ -43,6 +43,13 @@ export class CategoryService {
   }
 
   async update(id: number, ownerId: number, updateCategoryDto: UpdateCategoryDto) {
+    const isCategoryWithEditNameExist = await this.databaseService.category.findFirst({
+      where: {
+        name: updateCategoryDto.name,
+        ownerId,
+      },
+    });
+    if (isCategoryWithEditNameExist) throw new BadRequestException('Категория с таким названием уже сущетвует');
     const category = await this.databaseService.category.update({
       where: { id: id, ownerId: ownerId },
       data: {
