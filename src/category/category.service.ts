@@ -48,6 +48,9 @@ export class CategoryService {
   async update(id: number, ownerId: number, updateCategoryDto: UpdateCategoryDto) {
     const isCategoryWithEditNameExist = await this.databaseService.category.findFirst({
       where: {
+        NOT: {
+          id: id,
+        },
         name: updateCategoryDto.name,
         ownerId,
       },
