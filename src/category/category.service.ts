@@ -28,6 +28,9 @@ export class CategoryService {
   async findAll(ownerId: number) {
     const categories = await this.databaseService.category.findMany({
       where: { ownerId: ownerId },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
 
     return categories;
